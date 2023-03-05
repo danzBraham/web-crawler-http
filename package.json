@@ -1,0 +1,23 @@
+{
+  "name": "web-crawler-http",
+  "version": "1.0.0",
+  "description": "Project for the learn HTTP",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danzBraham/web-crawler-http.git"
+  },
+  "author": "Zidan Abraham",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danzBraham/web-crawler-http/issues"
+  },
+  "homepage": "https://github.com/danzBraham/web-crawler-http#readme",
+  "devDependencies": {
+    "jest": "^29.4.3"
+  }
+}
