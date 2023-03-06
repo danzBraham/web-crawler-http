@@ -1,4 +1,4 @@
-function normalizeURL(urlString) {
+export function normalizeURL(urlString) {
   const urlObj = new URL(urlString);
   const fullURL = `${urlObj.hostname}${urlObj.pathname}`;
 
@@ -10,5 +10,3 @@ function normalizeURL(urlString) {
   // Using ternary
   return fullURL.endsWith("/") ? fullURL.slice(0, -1) : fullURL;
 }
-
-module.exports = normalizeURL;

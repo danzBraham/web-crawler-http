@@ -1,4 +1,4 @@
-const normalizeURL = require("./crawl");
+import { normalizeURL } from "./crawl.js";
 
 test("normalizeURL strip protocol", () => {
   const input = "https://github.com/danzBraham";
