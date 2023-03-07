@@ -1,3 +1,32 @@
+import jsdom from "jsdom";
+const { JSDOM } = jsdom;
+
+export function getURLsFromHTML(htmlBody, baseURL) {
+  const urls = [];
+  const dom = new JSDOM(htmlBody);
+  const linkElements = dom.window.document.querySelectorAll("a");
+  for (const linkElement of linkElements) {
+    if (linkElement.href.slice(0, 1) === "/") {
+      // relative
+      try {
+        const url = new URL(linkElement.href, baseURL);
+        urls.push(url.href);
+      } catch (err) {
+        console.log(`Error with relative url: ${err.message}`);
+      }
+    } else {
+      // absolute
+      try {
+        const url = new URL(linkElement.href);
+        urls.push(url.href);
+      } catch (err) {
+        console.log(`Error with absolute url: ${err.message}`);
+      }
+    }
+  }
+  return urls;
+}
+
 export function normalizeURL(urlString) {
   const urlObj = new URL(urlString);
   const fullURL = `${urlObj.hostname}${urlObj.pathname}`;
