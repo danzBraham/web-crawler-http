@@ -1,29 +1,6 @@
 import jsdom from "jsdom";
 const { JSDOM } = jsdom;
 
-export async function crawlPage(currentURL) {
-  console.log(`Actively crawling: ${currentURL}`);
-  try {
-    const response = await fetch(currentURL);
-    if (response.status > 399) {
-      console.log(
-        `Error in fetch with status code: ${response.status}, on page: ${currentURL}`
-      );
-      return;
-    }
-    const contentType = response.headers.get("Content-Type");
-    if (!contentType.includes("text/html")) {
-      console.log(
-        `Error in fetch with headers: ${contentType}, on page: ${currentURL}`
-      );
-      return;
-    }
-    console.log(await response.text());
-  } catch (err) {
-    console.log(`Error in fetch: ${err.message}, on page: ${currentURL}`);
-  }
-}
-
 export function getURLsFromHTML(htmlBody, baseURL) {
   const urls = [];
   const dom = new JSDOM(htmlBody);
@@ -53,12 +30,49 @@ export function getURLsFromHTML(htmlBody, baseURL) {
 export function normalizeURL(urlString) {
   const urlObj = new URL(urlString);
   const fullURL = `${urlObj.hostname}${urlObj.pathname}`;
-
-  // Using if
-  // if (fullURL.length > 0 && fullURL.slice(-1) === "/") {
-  //   return fullURL.slice(0, -1);
-  // }
-
-  // Using ternary
   return fullURL.endsWith("/") ? fullURL.slice(0, -1) : fullURL;
+}
+
+export async function crawlPage(baseURL, currentURL, pages) {
+  const baseURLObj = new URL(baseURL);
+  const currentURLObj = new URL(currentURL);
+
+  if (currentURLObj.hostname !== baseURLObj.hostname) {
+    return pages;
+  }
+
+  const normalizedURL = normalizeURL(currentURL);
+  if (pages[normalizedURL] > 0) {
+    pages[normalizedURL]++;
+    return pages;
+  }
+
+  pages[normalizedURL] = 1;
+
+  console.log(`Actively crawling: ${currentURL}`);
+  try {
+    const response = await fetch(currentURL);
+    if (response.status > 399) {
+      console.log(
+        `Error in fetch with status code: ${response.status}, on page: ${currentURL}`
+      );
+      return pages;
+    }
+    const contentType = response.headers.get("Content-Type");
+    if (!contentType.includes("text/html")) {
+      console.log(
+        `Error in fetch with headers: ${contentType}, on page: ${currentURL}`
+      );
+      return pages;
+    }
+    const htmlBody = await response.text();
+    const nextURLs = getURLsFromHTML(htmlBody, baseURL);
+    for (const nextURL of nextURLs) {
+      pages = await crawlPage(baseURL, nextURL, pages);
+    }
+  } catch (err) {
+    console.log(`Error in fetch: ${err.message}, on page: ${currentURL}`);
+  }
+
+  return pages;
 }
