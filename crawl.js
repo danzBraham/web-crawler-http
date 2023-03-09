@@ -13,7 +13,6 @@ export function getURLsFromHTML(htmlBody, baseURL) {
   const linkElements = dom.window.document.querySelectorAll("a");
   for (const linkElement of linkElements) {
     if (linkElement.href.startsWith("/")) {
-      // relative
       try {
         const url = new URL(linkElement.href, baseURL);
         urls.push(url.href);
@@ -21,7 +20,6 @@ export function getURLsFromHTML(htmlBody, baseURL) {
         console.log(`Error with relative url: ${err.message}`);
       }
     } else {
-      // absolute
       try {
         const url = new URL(linkElement.href);
         urls.push(url.href);

@@ -1,17 +1,12 @@
 export function sortPages(pages) {
-  const pagesArr = Object.entries(pages);
-  pagesArr.sort((pageA, pageB) => {
-    return pageB[1] - pageA[1];
-  });
-  return pagesArr;
+  return Object.entries(pages).sort((pageA, pageB) => pageB[1] - pageA[1]);
 }
 
 export function printReport(pages) {
-  console.log();
-  console.log("===== REPORT =====");
+  console.log(`===== REPORT =====`);
   const sortedPages = sortPages(pages);
-  for (const sortedPage of sortedPages) {
-    console.log(`Found ${sortedPage[1]} links connected to ${sortedPage[0]}`);
-  }
-  console.log("===== END REPORT =====");
+  sortedPages.forEach(([page, count]) => {
+    console.log(`Found ${count} links connected to ${page}`);
+  });
+  console.log(`===== END REPORT =====`);
 }
