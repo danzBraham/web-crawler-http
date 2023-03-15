@@ -2,6 +2,10 @@ import jsdom from "jsdom";
 const { JSDOM } = jsdom;
 
 export function normalizeURL(urlString) {
+  if (!urlString) {
+    return "";
+  }
+
   const urlObj = new URL(urlString);
   const fullURL = `${urlObj.hostname}${urlObj.pathname}`;
   return fullURL.endsWith("/") ? fullURL.slice(0, -1) : fullURL;
@@ -12,7 +16,7 @@ export function getURLsFromHTML(htmlBody, baseURL) {
   const dom = new JSDOM(htmlBody);
   const linkElements = dom.window.document.querySelectorAll("a");
   for (const linkElement of linkElements) {
-    if (linkElement.href.startsWith("/")) {
+    if (linkElement.href.startsWith("/") || linkElement.href.startsWith(".")) {
       try {
         const url = new URL(linkElement.href, baseURL);
         urls.push(url.href);
